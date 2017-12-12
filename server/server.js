@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
-
+const {generateMessage} = require('./utils/message');
 
 const publicPath = path.join(__dirname, '../public');
 var port = process.env.PORT || 3000;
@@ -25,26 +25,15 @@ io.on('connection', (socket) => {
     //     createAt: new Date().toDateString()
     // });
 
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: "Welcome to the chat"
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-    socket.broadcast.emit('newMessage', {
-        from: "Admin",
-        text: "New User Joined",
-        createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User Joined'));
 
     // LISTENING TO A CUSTOM EVENT
     socket.on('createMessage', (newMessage) => {
         console.log(newMessage);
         // GOES TO EVERYONE
-        io.emit('newMessage', {
-            from: newMessage.from,
-            text: newMessage.text,
-            createdAt: new Date().getTime()
-        });
+        io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
 
         //client doesnt recive the message
         // socket.broadcast.emit('newMessage', {
