@@ -25,14 +25,33 @@ io.on('connection', (socket) => {
     //     createAt: new Date().toDateString()
     // });
 
+    socket.emit('newMessage', {
+        from: 'Admin',
+        text: "Welcome to the chat"
+    });
+
+    socket.broadcast.emit('newMessage', {
+        from: "Admin",
+        text: "New User Joined",
+        createdAt: new Date().getTime()
+    });
+
     // LISTENING TO A CUSTOM EVENT
     socket.on('createMessage', (newMessage) => {
         console.log(newMessage);
+        // GOES TO EVERYONE
         io.emit('newMessage', {
             from: newMessage.from,
             text: newMessage.text,
             createdAt: new Date().getTime()
-        })
+        });
+
+        //client doesnt recive the message
+        // socket.broadcast.emit('newMessage', {
+        //     from: newMessage.from,
+        //     text: newMessage.text,
+        //     createdAt: new Date().getTime()
+        // });
     });
 
     // EVENT LISTENER TO CHECK FOR DISCONNECTION
