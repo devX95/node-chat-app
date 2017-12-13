@@ -30,10 +30,11 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('newMessage',generateMessage('Admin', 'New User Joined'));
 
     // LISTENING TO A CUSTOM EVENT
-    socket.on('createMessage', (newMessage) => {
-        console.log(newMessage);
+    socket.on('createMessage', (newMessage, callback) => {
+        // console.log(newMessage);
         // GOES TO EVERYONE
         io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+        callback('This is from the server');
 
         //client doesnt recive the message
         // socket.broadcast.emit('newMessage', {
