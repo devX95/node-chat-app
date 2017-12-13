@@ -1,3 +1,4 @@
+
 // CONNECT TO SOCKET
 var socket = io();
 // CONNECTION LISTENER
@@ -16,9 +17,9 @@ socket.on('connect', () => {
 
 // LISTENING TO A CUSTOM EVENT
 socket.on('newMessage', function(message) {
-    console.log("New message: ", message);
+    var formattedTime = moment(message.createdAt).format('h:mm a');
     var li = $('<li></li>');
-    li.text(`${message.from}: ${message.text}`);
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
     $('#messages').append(li);
 });
 
