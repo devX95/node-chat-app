@@ -19,15 +19,28 @@ function scrollToBottom() {
 // CONNECTION LISTENER
 socket.on('connect', () => {
     console.log('Connected to server');
+    var params = $.deparam(window.location.search);
 
-    // EMITTING A CUSTOM EVENT FROM THE CLIENT
-    // socket.emit('createMessage', {
-    //     to: "gibran",
-    //     text: "No"
-    // });
+    socket.emit('join', params, function(error){
+        if(error) {
+            alert(error);
+            window.location.href = "/";
+        } else {
+            console.log('No error');
+        }
+    });
 });
     socket.on('disconnect', () => {
         console.log('Disconnect from server');
+});
+
+socket.on('updateUsersList', function(users) {
+    var ol = $('<ol></ol>');
+    users.forEach(function (user){
+        ol.append($('<li></li>').text(user));
+    });
+
+    $('#users').html(ol);
 });
 
 // LISTENING TO A CUSTOM EVENT
