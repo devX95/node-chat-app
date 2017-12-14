@@ -1,6 +1,21 @@
-
 // CONNECT TO SOCKET
 var socket = io();
+
+function scrollToBottom() {
+    //selectors
+    var messages = $('#messages');
+    var newMessage = messages.children('li:last-child');
+    //heights
+    var clientHeight = messages.prop('clientHeight');
+    var scrollTop = messages.prop('scrollTop');
+    var scrollHeight = messages.prop('scrollHeight');
+    var newMessageHeight = newMessage.innerHeight();
+    var lastMessageHeight = newMessage.prev().innerHeight();
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+        messages.scrollTop(scrollHeight);
+    }
+}
+
 // CONNECTION LISTENER
 socket.on('connect', () => {
     console.log('Connected to server');
@@ -18,9 +33,19 @@ socket.on('connect', () => {
 // LISTENING TO A CUSTOM EVENT
 socket.on('newMessage', function(message) {
     var formattedTime = moment(message.createdAt).format('h:mm a');
-    var li = $('<li></li>');
-    li.text(`${message.from} ${formattedTime}: ${message.text}`);
-    $('#messages').append(li);
+    var template = $('#message-template').html();
+    var html = Mustache.render(template, {
+        text: message.text,
+        from: message.from,
+        createdAt: formattedTime
+    });
+
+    $('#messages').append(html);
+    scrollToBottom();
+    // 
+    // var li = $('<li></li>');
+    // li.text(`${message.from} ${formattedTime}: ${message.text}`);
+    // $('#messages').append(li);
 });
 
 // socket.emit('createMessage', {
