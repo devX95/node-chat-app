@@ -49,8 +49,13 @@ io.on('connection', (socket) => {
     socket.on('createMessage', (newMessage, callback) => {
         // console.log(newMessage);
         // GOES TO EVERYONE
-        io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+        // io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
 
+        var user = users.getUser(socket.id);
+        if(user && isRealString(newMessage.text)) {
+            io.to(user.room).emit('newMessage', generateMessage(user.name, newMessage.text));
+        }
+        
         callback();
 
         //client doesnt recive the message
